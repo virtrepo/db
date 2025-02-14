@@ -1,3 +1,56 @@
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 -- practical 1 -- mysql1
 -- mysql -u root -P
 
@@ -332,7 +385,7 @@ C:\hadoop
 
 -- Start Hadoop Name node and data node
 -- please go inside the sbin directory and then run in some pc not working the comand
-start-dfs.cmd 
+start-dfs.cmd
 
 --to chek the version of hadoop
 hadoop version 
@@ -345,8 +398,8 @@ hadoop fs -ls /
 or
 hdfs dfs -ls /
 
--- webui for browse files
-http://localhost:9870  
+-- webui for browse files in chrome
+http://localhost:9870 or http://localhost:50070
 
 -- make NEW subdirectory
 hadoop fs -mkdir /BIGDATA-DS24322/MYROLL-DS24322   -- OR THE hdfs dfs
@@ -390,6 +443,11 @@ hdfs dfs -rm -r /folder_1
 hdfs dfs -du -h /
 
 -- practical 6 hadoop pig
+start-dfs.cmd
+
+--to chek the version of hadoop
+hadoop version 
+
 hdfs dfs -ls /
 
 -- copy file from local to Hadoop
@@ -419,7 +477,7 @@ dump word_count;
 
 
 -- practical 7 word wrangling
-start-fds.cmd
+start-dfs.cmd
 start-yarn.cmd
 
 pig -x local -- for local Modern
@@ -467,13 +525,15 @@ DUMP married_customers;
 -- average balance of customers based on education
 group_by_education = GROUP bank_data BY education;
 avg_balance = FOREACH group_by_education GENERATE group, AVG(bank_data.balance);
+
 DUMP avg_balance
 
 -- number of customers taken the loan on marital status
 loan_customers = FILTER bank_data BY loan == 'yes';
 group_by_marital = GROUP loan_customers BY marital;
 loan_count = FOREACH group_by_marital GENERATE group AS marital_status, COUNT(loan_customers) AS loan_count;
-dump loan_count;
+
+DUMP loan_count;
 
 -- number of defaulters and non defaulters
 default = GROUP bank_data BY default;
@@ -481,10 +541,21 @@ default_count = FOREACH default GENERATE group AS default_group, COUNT(bank_data
 
 -- loan taken more than 1000 days
 long_duration = FILTER bank_data BY duration > 1000;
+
 DUMP long_duration;
 
 
 -- practical 8 hive
+
+    hive> create table Lecture(
+    Room int,
+    Da_te varchar(20),
+    Time varchar(20),
+    Course varchar(20),
+    T_ID varchar(20),
+    row format delimited
+    fields terminated by ',';
+
 
 -- practical 10 neo4j
 CREATE (:Product_node {pid: "p01", pname: "soap", comp_name: "lux", cost: 20}); 
@@ -526,9 +597,3 @@ RETURN AVG(toInteger(o.qty)) AS average_quantity;
 Delete All Orders & Products
 MATCH (o:Order_node) DETACH DELETE o; 
 MATCH (p:Product_node) DETACH DELETE p;
-
-
-
-
-
-
