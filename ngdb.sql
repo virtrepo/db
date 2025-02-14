@@ -547,14 +547,104 @@ DUMP long_duration;
 
 -- practical 8 hive
 
-    hive> create table Lecture(
-    Room int,
-    Da_te varchar(20),
-    Time varchar(20),
-    Course varchar(20),
-    T_ID varchar(20),
-    row format delimited
-    fields terminated by ',';
+start-dfs.cmd
+start-yarn.cmd
+
+-- 3.	Start Derby Server
+startnetworkserver -h.0.0.0.0
+
+-- hive start
+hive
+
+-- 5.	Create a managed table in Hive (lecture) 
+
+CREATE TABLE Lecture (
+    Room INT,
+    Da_te STRING,
+    Time STRING,
+    Course STRING,
+    T_ID STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',';
+
+-- 6.	Load the data from a text file 
+LOAD DATA LOCAL INPATH 'C:\\Lecture.txt' INTO TABLE Lecture; --load data 
+
+-- 7.	View the records of the file
+select * from Lecture; --show data
+
+-- 8.	View the metadata
+describe Lecture; -- describe data
+
+-- 9.	Create the external table in Hive (teacher)
+
+CREATE EXTERNAL TABLE teacher (
+    T_ID_PK STRING,
+    T_Name STRING,
+    T_Dept STRING,
+    T_Exp INT,
+    T_Highest_Degree STRING
+)
+ROW FORMAT DELIMITED
+FIELDS TERMINATED BY ',' 
+STORED AS TEXTFILE;
+
+-- 10.	Load the data from HDFS text file into the external table
+
+LOAD DATA INPATH 'hdfs://localhost:9000/teacher.txt'  
+INTO TABLE teacher;
+
+-- 11.	View the tables from localhost:50070 Hadoop web UI
+
+drop table teacher; --delete table
+
+-- practical 9 
+hbase shell
+
+-- 1)	Create a namespace order
+create_namespace 'order'
+
+-- 2)	create the following "customer" table inside the "order" namespace
+create 'order:customer', {NAME => 'Customers', VERSIONS => 1}, {NAME => 'Product', VERSIONS => 1}
+
+-- 3)	Insert the following records
+put 'order:customer', 'C01', 'Customers:Customer_name', 'Sam Singh'
+put 'order:customer', 'C01', 'Customers:City', 'Bangalore'
+put 'order:customer', 'C01', 'Product:Product_name', 'Mike'
+put 'order:customer', 'C01', 'Product:Price', '500'
+
+put 'order:customer', 'C02', 'Customers:Customer_name', 'Arijit Chauhan'
+put 'order:customer', 'C02', 'Customers:City', 'Goa'
+put 'order:customer', 'C02', 'Product:Product_name', 'Speakers'
+put 'order:customer', 'C02', 'Product:Price', '1500'
+
+put 'order:customer', 'C03', 'Customers:Customer_name', 'Rajesh Sinha'
+put 'order:customer', 'C03', 'Customers:City', 'Mumbai'
+put 'order:customer', 'C03', 'Product:Product_name', 'Pen Drive'
+put 'order:customer', 'C03', 'Product:Price', '1000'
+
+put 'order:customer', 'C04', 'Customers:Customer_name', 'Rupesh Mahanti'
+put 'order:customer', 'C04', 'Customers:City', 'Goa'
+put 'order:customer', 'C04', 'Product:Product_name', 'Mouse'
+put 'order:customer', 'C04', 'Product:Price', '3500'
+
+-- 4)	Print all the records
+scan 'order:customer' 
+
+-- 5)	print only the customer_name and city
+scan 'order:customer', {COLUMNS => ['Customers:Customer_name', 'Customers:City']}
+
+-- 6)	print the first 2 records
+scan 'order:customer', {LIMIT => 2}
+
+-- 7)	Print the names of the products where price is greater than 1000
+scan 'order:customer', {FILTER => "SingleColumnValueFilter('Product', 'Price', >, 'binary:1000')"}
+
+-- 8)	Print the row 2nd and 3rd
+scan 'order:customer', {STARTROW => 'C02', STOPROW => 'C04'}
+
+count 'order:customer'
 
 
 -- practical 10 neo4j
